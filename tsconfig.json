@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "target": "es2018",
+    "baseUrl": "./",
+    "declaration": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "sourceRoot": "./",
+    "inlineSources": true
+  },
+  "include": ["src/**/*.ts"]
+}

@@ -15,32 +15,33 @@ export const jestConfigFactory = ({
   transformersConfig?: Record<string, any>
   transformers?: Record<string, string>
 } = {}) => {
+  const consolidatedTransformersConfig = ts
+    ? [
+        'ts-jest',
+        {
+          tsconfig: processorConfigPath ?? path.join(__dirname, 'tsconfig.json'),
+          ...transformersConfig,
+        },
+      ]
+    : [
+        'babel-jest',
+        {
+          rootDir: processorConfigPath ? path.dirname(path.join(__dirname, processorConfigPath)) : __dirname,
+          ...transformersConfig,
+        },
+      ]
+
   const config = {
     preset: ts ? 'ts-jest' : 'babel-jest',
     testEnvironment,
-    globals: ts
-      ? {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          'ts-jest': {
-            tsconfig: processorConfigPath ?? path.join(__dirname, 'tsconfig.json'),
-          },
-          ...transformersConfig,
-        }
-      : {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          'babel-jest': {
-            rootDir: processorConfigPath ? path.dirname(path.join(__dirname, processorConfigPath)) : __dirname,
-          },
-          ...transformersConfig,
-        },
     transform: ts
       ? {
-          '^.+\\.jsx?$': 'ts-jest', // eslint-disable-line @typescript-eslint/naming-convention
-          '^.+\\.tsx?$': 'ts-jest', // eslint-disable-line @typescript-eslint/naming-convention
+          '^.+\\.jsx?$': consolidatedTransformersConfig, // eslint-disable-line @typescript-eslint/naming-convention
+          '^.+\\.tsx?$': consolidatedTransformersConfig, // eslint-disable-line @typescript-eslint/naming-convention
           ...transformers,
         }
       : {
-          '^.+\\.jsx?$': 'babel-jest', // eslint-disable-line @typescript-eslint/naming-convention
+          '^.+\\.jsx?$': consolidatedTransformersConfig, // eslint-disable-line @typescript-eslint/naming-convention
           ...transformers,
         },
     transformIgnorePatterns: transformIgnorePatterns,

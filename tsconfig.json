@@ -3,15 +3,17 @@
     "moduleResolution": "node",
     "module": "commonjs",
     "target": "es2018",
-    "baseUrl": "./",
     "declaration": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
+    "rootDir": "./src",
     "outDir": "dist",
     "preserveConstEnums": true,
+    "noUncheckedIndexedAccess": true,
     "sourceMap": true,
     "sourceRoot": "./",
-    "inlineSources": true
+    "inlineSources": true,
+    "types": ["node"]
   },
   "include": ["src/**/*.ts"]
 }

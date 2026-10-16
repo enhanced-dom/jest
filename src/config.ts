@@ -1,4 +1,7 @@
 import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url)) // eslint-disable-line @typescript-eslint/naming-convention
 
 export const jestConfigFactory = ({
   ts,
@@ -7,6 +10,7 @@ export const jestConfigFactory = ({
   transformIgnorePatterns = ['node_modules/(?!@enhanced-dom/)'],
   transformersConfig = {},
   transformers = {},
+  moduleNameMapper = {},
 }: {
   ts?: boolean
   testEnvironment?: string
@@ -14,6 +18,7 @@ export const jestConfigFactory = ({
   transformIgnorePatterns?: string[]
   transformersConfig?: Record<string, any>
   transformers?: Record<string, string>
+  moduleNameMapper?: Record<string, string>
 } = {}) => {
   const consolidatedTransformersConfig = ts
     ? [
@@ -33,18 +38,22 @@ export const jestConfigFactory = ({
 
   const config = {
     preset: ts ? 'ts-jest' : 'babel-jest',
-    testEnvironment,
+    testEnvironment: testEnvironment === 'jest-environment-linkedom' ? path.join(__dirname, 'linkedom-environment.js') : testEnvironment,
     transform: ts
       ? {
-          '^.+\\.jsx?$': consolidatedTransformersConfig, // eslint-disable-line @typescript-eslint/naming-convention
-          '^.+\\.tsx?$': consolidatedTransformersConfig, // eslint-disable-line @typescript-eslint/naming-convention
+          '^.+\\.jsx?$': consolidatedTransformersConfig,
+          '^.+\\.tsx?$': consolidatedTransformersConfig,
           ...transformers,
         }
       : {
-          '^.+\\.jsx?$': consolidatedTransformersConfig, // eslint-disable-line @typescript-eslint/naming-convention
+          '^.+\\.jsx?$': consolidatedTransformersConfig,
           ...transformers,
         },
     transformIgnorePatterns: transformIgnorePatterns,
+    moduleNameMapper: {
+      ...moduleNameMapper,
+      '\\.(css|pcss|sass)$': moduleNameMapper['\\.(css|pcss|sass)$'] ?? path.join(__dirname, 'style-mock.js'),
+    },
   }
   return config
 }
